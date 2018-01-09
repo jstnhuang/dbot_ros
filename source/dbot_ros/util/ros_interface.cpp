@@ -36,9 +36,10 @@ void ri::publish_marker(const geometry_msgs::PoseStamped& pose_stamped,
     marker.pose = pose_stamped.pose;
 
     marker.header.frame_id = pose_stamped.header.frame_id;
-    marker.header.stamp    = pose_stamped.header.stamp;
-    marker.ns              = ns;
-    marker.id              = marker_id;
+    // marker.header.stamp    = pose_stamped.header.stamp;
+    marker.header.stamp = ros::Time::now();
+    marker.ns           = ns;
+    marker.id           = marker_id;
 
     marker.mesh_resource = object_model_path;
     marker.scale.x       = 1.0;
