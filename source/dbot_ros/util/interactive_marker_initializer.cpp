@@ -293,7 +293,7 @@ void InteractiveMarkerInitializer::process_feedback(
     // update marker pose
     int i = std::stoi(feedback->marker_name);
 
-    ROS_INFO("Marker Frame %s", feedback->header.frame_id.c_str());
+    // ROS_INFO("Marker Frame %s", feedback->header.frame_id.c_str());
 
     // if the feedback from the marker is in a different than the desired frame
     // convert it using a transform listener
