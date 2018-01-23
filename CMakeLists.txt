@@ -99,13 +99,17 @@ file(GLOB_RECURSE dbot_ros_HEADERS
     ${dbot_SOURCE_DIR}/*.h)
 
 set(dbot_ros_SOURCES
+    source/${PROJECT_NAME}/object_tracker.cpp
     source/${PROJECT_NAME}/object_tracker_ros.cpp
     source/${PROJECT_NAME}/object_tracker_publisher.cpp 
     source/${PROJECT_NAME}/util/ros_camera_data_provider.cpp
     source/${PROJECT_NAME}/util/data_set_camera_data_provider.cpp
     source/${PROJECT_NAME}/util/ros_interface.cpp
     source/${PROJECT_NAME}/util/tracking_dataset.cpp
-    source/${PROJECT_NAME}/util/interactive_marker_initializer.cpp)
+    source/${PROJECT_NAME}/util/interactive_marker_initializer.cpp
+    source/${PROJECT_NAME}/util/camera_info_camera_provider.cpp
+    source/${PROJECT_NAME}/util/particle_tracker_builder.cpp
+)
 
 add_library(${PROJECT_NAME}
   ${dbot_ros_HEADERS}
@@ -169,4 +173,14 @@ target_link_libraries(
   interactive_markers_initializer_node
   ${PROJECT_NAME}
   ${catkin_LIBRARIES})
+
+add_executable(
+  multi_object_tracker_node
+  source/${PROJECT_NAME}/multi_object_tracker_node.cpp
+target_link_libraries(
+  ${PROJECT_NAME}
+  ${catkin_LIBRARIES})
+
+
+
 
