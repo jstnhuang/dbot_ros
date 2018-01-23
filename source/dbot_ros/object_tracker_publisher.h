@@ -26,6 +26,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <ros/ros.h>
 #include <sensor_msgs/Image.h>
+#include <string>
 #include <vector>
 
 namespace dbot
@@ -41,6 +42,11 @@ public:
                          int object_color_red,
                          int object_color_green,
                          int object_color_blue);
+    ObjectStatePublisher(const dbot::ObjectResourceIdentifier& ori,
+                         int object_color_red,
+                         int object_color_green,
+                         int object_color_blue,
+                         const std::string& topic_suffix);
 
     void publish(const std::vector<dbot_ros_msgs::ObjectState>& state);
 

@@ -48,6 +48,26 @@ ObjectStatePublisher::ObjectStatePublisher(
         node_handle_.advertise<dbot_ros_msgs::ObjectState>("object_state", 0);
 }
 
+ObjectStatePublisher::ObjectStatePublisher(
+    const dbot::ObjectResourceIdentifier& ori,
+    int object_color_red,
+    int object_color_green,
+    int object_color_blue,
+    const std::string& topic_suffix)
+    : node_handle_("~"),
+      ori_(ori),
+      object_color_red_(object_color_red),
+      object_color_green_(object_color_green),
+      object_color_blue_(object_color_blue)
+{
+    object_marker_publisher_ =
+        node_handle_.advertise<visualization_msgs::Marker>(
+            "object_model" + topic_suffix, 0, true);
+    object_state_publisher_ =
+        node_handle_.advertise<dbot_ros_msgs::ObjectState>(
+            "object_state" + topic_suffix, 0);
+}
+
 void ObjectStatePublisher::publish(
     const std::vector<dbot_ros_msgs::ObjectState>& states)
 
