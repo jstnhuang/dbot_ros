@@ -176,11 +176,18 @@ target_link_libraries(
 
 add_executable(
   multi_object_tracker_node
-  source/${PROJECT_NAME}/multi_object_tracker_node.cpp
-target_link_libraries(
+  source/${PROJECT_NAME}/multi_object_tracker_node.cpp)
+add_dependencies(multi_object_tracker_node
+  dbot_ros_msgs_generate_messages_cpp)
+target_link_libraries(multi_object_tracker_node
   ${PROJECT_NAME}
   ${catkin_LIBRARIES})
 
-
-
-
+add_executable(
+  initialize_object_action_node
+  source/${PROJECT_NAME}/initialize_object_action_node.cpp)
+add_dependencies(initialize_object_action_node
+  dbot_ros_msgs_generate_messages_cpp)
+target_link_libraries(initialize_object_action_node
+  ${PROJECT_NAME}
+  ${catkin_LIBRARIES})
