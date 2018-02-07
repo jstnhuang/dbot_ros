@@ -23,6 +23,9 @@
 #include <dbot_ros/util/interactive_marker_initializer.h>
 #include <fstream>
 #include <ros/assert.h>
+#include <visualization_msgs/InteractiveMarker.h>
+#include <visualization_msgs/InteractiveMarkerControl.h>
+#include <visualization_msgs/Marker.h>
 
 namespace opi
 {
@@ -239,6 +242,9 @@ void InteractiveMarkerInitializer::add_object_controller(
 
     // add the control to the interactive marker
     int_marker.controls.push_back(object_control);
+
+    // Add axes control
+    int_marker.controls.push_back(make_axes_control());
 }
 
 void InteractiveMarkerInitializer::add_controllers(
@@ -405,5 +411,76 @@ void InteractiveMarkerInitializer::cache_pose(
     pose_tmp_file << pose.orientation.w << " " << pose.orientation.x << " "
                   << pose.orientation.y << " " << pose.orientation.z;
     pose_tmp_file.close();
+}
+
+visualization_msgs::InteractiveMarkerControl make_axes_control()
+{
+    visualization_msgs::InteractiveMarkerControl axes_control;
+    axes_control.orientation.w = 1;
+    axes_control.interaction_mode =
+        visualization_msgs::InteractiveMarkerControl::NONE;
+    axes_control.always_visible = true;
+
+    visualization_msgs::Marker x_axis;
+    x_axis.ns                 = "axes";
+    x_axis.id                 = 0;
+    x_axis.type               = visualization_msgs::Marker::CYLINDER;
+    x_axis.pose.orientation.w = 0.7071;
+    x_axis.pose.orientation.x = 0;
+    x_axis.pose.orientation.y = 0.7071;
+    x_axis.pose.orientation.z = 0;
+    x_axis.pose.position.x    = 0.1;
+    x_axis.pose.position.y    = 0;
+    x_axis.pose.position.z    = 0;
+    x_axis.scale.x            = 0.01;
+    x_axis.scale.y            = 0.01;
+    x_axis.scale.z            = 0.2;
+    x_axis.color.r            = 1;
+    x_axis.color.g            = 0;
+    x_axis.color.b            = 0;
+    x_axis.color.a            = 1;
+
+    visualization_msgs::Marker y_axis;
+    y_axis.ns                 = "axes";
+    y_axis.id                 = 1;
+    y_axis.type               = visualization_msgs::Marker::CYLINDER;
+    y_axis.pose.orientation.w = 0.7071;
+    y_axis.pose.orientation.x = 0.7071;
+    y_axis.pose.orientation.y = 0;
+    y_axis.pose.orientation.z = 0;
+    y_axis.pose.position.x    = 0;
+    y_axis.pose.position.y    = 0.1;
+    y_axis.pose.position.z    = 0;
+    y_axis.scale.x            = 0.01;
+    y_axis.scale.y            = 0.01;
+    y_axis.scale.z            = 0.2;
+    y_axis.color.r            = 0;
+    y_axis.color.g            = 1;
+    y_axis.color.b            = 0;
+    y_axis.color.a            = 1;
+
+    visualization_msgs::Marker z_axis;
+    z_axis.ns                 = "axes";
+    z_axis.id                 = 2;
+    z_axis.type               = visualization_msgs::Marker::CYLINDER;
+    z_axis.pose.orientation.w = 1;
+    z_axis.pose.orientation.x = 0;
+    z_axis.pose.orientation.y = 0;
+    z_axis.pose.orientation.z = 0;
+    z_axis.pose.position.x    = 0;
+    z_axis.pose.position.y    = 0;
+    z_axis.pose.position.z    = 0.1;
+    z_axis.scale.x            = 0.01;
+    z_axis.scale.y            = 0.01;
+    z_axis.scale.z            = 0.2;
+    z_axis.color.r            = 0;
+    z_axis.color.g            = 0;
+    z_axis.color.b            = 1;
+    z_axis.color.a            = 1;
+
+    axes_control.markers.push_back(x_axis);
+    axes_control.markers.push_back(y_axis);
+    axes_control.markers.push_back(z_axis);
+    return axes_control;
 }
 }

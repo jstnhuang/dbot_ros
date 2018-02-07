@@ -27,6 +27,7 @@
 #include <mutex>
 #include <ros/ros.h>
 #include <tf/transform_listener.h>
+#include <visualization_msgs/InteractiveMarkerControl.h>
 
 namespace opi
 {
@@ -208,4 +209,6 @@ private:
      */
     tf::TransformListener listener_;
 };
+
+visualization_msgs::InteractiveMarkerControl make_axes_control();
 }
