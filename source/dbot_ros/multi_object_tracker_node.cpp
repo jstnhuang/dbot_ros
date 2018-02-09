@@ -139,9 +139,11 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "dbot_multi_object_tracker");
     ros::NodeHandle nh;
 
+    std::string object_name(argv[1]);
+
     pbi::MultiObjectTracker tracker;
     ros::ServiceServer server =
-        nh.advertiseService("multi_object_track",
+        nh.advertiseService("multi_object_track/" + object_name,
                             &pbi::MultiObjectTracker::HandleRequest,
                             &tracker);
 
