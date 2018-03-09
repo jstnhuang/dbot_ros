@@ -50,7 +50,43 @@ void ObjectTracker::Step(const sensor_msgs::Image& depth)
         ROS_ERROR("Object tracker for \"%s\" not instantiated", name_.c_str());
         return;
     }
-    object_tracker_->update_obsrv(depth);
+    if (depth.encoding != sensor_msgs::image_encodings::TYPE_32FC1 &&
+        depth.encoding != sensor_msgs::image_encodings::TYPE_16UC1)
+    {
+        ROS_ERROR("Unsupported depth encoding %s", depth.encoding.c_str());
+        return;
+    }
+    if (depth.encoding == sensor_msgs::image_encodings::TYPE_32FC1)
+    {
+        object_tracker_->update_obsrv(depth);
+    }
+    else if (depth.encoding == sensor_msgs::image_encodings::TYPE_16UC1)
+    {
+        // Encodes millimeters, convert to float
+        sensor_msgs::Image depth_float;
+        depth_float.header       = depth.header;
+        depth_float.height       = depth.height;
+        depth_float.width        = depth.width;
+        depth_float.encoding     = sensor_msgs::image_encodings::TYPE_32FC1;
+        depth_float.is_bigendian = false;
+        depth_float.step         = sizeof(float) * depth.width;
+        const uint16_t* data_16 =
+            reinterpret_cast<const uint16_t*>(depth.data.data());
+        float data_float[depth.height * depth.width];
+        for (unsigned int row = 0; row < depth.height; ++row)
+        {
+            for (unsigned int col = 0; col < depth.width; ++col)
+            {
+                int index         = row * depth.width + col;
+                data_float[index] = data_16[index] / 1000.0;
+            }
+        }
+        uint8_t* data_8 = reinterpret_cast<uint8_t*>(data_float);
+        depth_float.data.assign(
+            data_8, data_8 + sizeof(float) * depth.height * depth.width);
+
+        object_tracker_->update_obsrv(depth_float);
+    }
     object_tracker_->run_once();
 }
 
