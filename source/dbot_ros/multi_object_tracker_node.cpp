@@ -24,17 +24,19 @@ public:
                 const sensor_msgs::CameraInfo& camera_info);
     void Destroy(const std::string& name);
     void DestroyAll();
-    void SetPose(const std::string& name, const geometry_msgs::Pose& pose);
+    void SetPose(const std::string& name,
+                 const geometry_msgs::Pose& pose,
+                 const geometry_msgs::Twist& twist);
     void Step(const std::string& name, const sensor_msgs::Image& depth_image);
-    bool GetPose(const std::string& name, geometry_msgs::Pose* pose);
+    bool GetPose(const std::string& name,
+                 geometry_msgs::Pose* pose,
+                 geometry_msgs::Twist* twist);
 
 private:
     std::map<std::string, ObjectTracker> trackers_;
 };
 
-MultiObjectTracker::MultiObjectTracker() : trackers_()
-{
-}
+MultiObjectTracker::MultiObjectTracker() : trackers_() {}
 
 bool MultiObjectTracker::HandleRequest(msgs::MultiTrackRequest& req,
                                        msgs::MultiTrackResponse& res)
@@ -53,7 +55,7 @@ bool MultiObjectTracker::HandleRequest(msgs::MultiTrackRequest& req,
     }
     else if (req.type == msgs::MultiTrackRequest::SET_POSE)
     {
-        SetPose(req.object_name, req.pose);
+        SetPose(req.object_name, req.pose, req.twist);
     }
     else if (req.type == msgs::MultiTrackRequest::STEP)
     {
@@ -61,7 +63,7 @@ bool MultiObjectTracker::HandleRequest(msgs::MultiTrackRequest& req,
     }
     else if (req.type == msgs::MultiTrackRequest::GET_POSE)
     {
-        return GetPose(req.object_name, &res.pose);
+        return GetPose(req.object_name, &res.pose, &res.twist);
     }
     else
     {
@@ -100,14 +102,15 @@ void MultiObjectTracker::DestroyAll()
 }
 
 void MultiObjectTracker::SetPose(const std::string& name,
-                                 const geometry_msgs::Pose& pose)
+                                 const geometry_msgs::Pose& pose,
+                                 const geometry_msgs::Twist& twist)
 {
     if (trackers_.find(name) == trackers_.end())
     {
         ROS_ERROR("Tracker for \"%s\" not created yet!", name.c_str());
         return;
     }
-    trackers_[name].SetPose(pose);
+    trackers_[name].SetPose(pose, twist);
 }
 
 void MultiObjectTracker::Step(const std::string& name,
@@ -122,14 +125,15 @@ void MultiObjectTracker::Step(const std::string& name,
 }
 
 bool MultiObjectTracker::GetPose(const std::string& name,
-                                 geometry_msgs::Pose* pose)
+                                 geometry_msgs::Pose* pose,
+                                 geometry_msgs::Twist* twist)
 {
     if (trackers_.find(name) == trackers_.end())
     {
         ROS_ERROR("Tracker for \"%s\" not created yet!", name.c_str());
         return false;
     }
-    trackers_[name].GetPose(pose);
+    trackers_[name].GetPose(pose, twist);
     return true;
 }
 }  // namespace pbi

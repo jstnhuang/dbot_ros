@@ -137,6 +137,12 @@ auto ObjectTrackerRos<Tracker>::current_pose() const
     return current_poses_[0];
 }
 
+template <typename Tracker>
+auto ObjectTrackerRos<Tracker>::current_velocity() const
+    -> geometry_msgs::TwistStamped
+{
+    return current_velocities_[0];
+}
 
 template <typename Tracker>
 auto ObjectTrackerRos<Tracker>::current_state_messages() const
@@ -161,4 +167,4 @@ auto ObjectTrackerRos<Tracker>::current_poses() const
 {
     return current_poses_;
 }
-}
+}  // namespace dbot

@@ -6,8 +6,9 @@
 
 #include "dbot/tracker/particle_tracker.h"
 #include "dbot_ros/object_tracker_ros.h"
-#include "dbot_ros_msgs/ObjectState.h"
+#include "geometry_msgs/Pose.h"
 #include "geometry_msgs/PoseStamped.h"
+#include "geometry_msgs/Twist.h"
 #include "ros/ros.h"
 #include "sensor_msgs/CameraInfo.h"
 #include "sensor_msgs/Image.h"
@@ -21,10 +22,12 @@ public:
     void Instantiate(const std::string& name,
                      const std::string& mesh_path,
                      const sensor_msgs::CameraInfo& camera_info);
-    void SetPose(const geometry_msgs::Pose& pose);
+    void SetPose(const geometry_msgs::Pose& pose,
+                 const geometry_msgs::Twist& twist);
     void Step(const sensor_msgs::Image& depth);
-    void GetPose(geometry_msgs::PoseStamped* pose_stamped) const;
-    void GetPose(geometry_msgs::Pose* pose) const;
+    void GetPose(geometry_msgs::PoseStamped* pose_stamped,
+                 geometry_msgs::Twist* twist) const;
+    void GetPose(geometry_msgs::Pose* pose, geometry_msgs::Twist* twist) const;
     std::string name() const;
     std::string mesh_name() const;
 

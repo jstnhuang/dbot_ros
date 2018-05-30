@@ -67,6 +67,7 @@ public:
 
     State current_state() const;
     geometry_msgs::PoseStamped current_pose() const;
+    geometry_msgs::TwistStamped current_velocity() const;
     std::vector<dbot_ros_msgs::ObjectState> current_state_messages() const;
     std::vector<geometry_msgs::PoseStamped> current_poses() const;
 
@@ -86,4 +87,4 @@ protected:
     std::shared_ptr<Tracker> tracker_;
     std::shared_ptr<dbot::CameraData> camera_data_;
 };
-}
+}  // namespace dbot

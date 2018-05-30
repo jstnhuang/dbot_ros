@@ -3,13 +3,10 @@
 #include <memory>
 #include <string>
 
+#include "Eigen/Dense"
 #include "dbot/object_resource_identifier.h"
-#include "dbot_ros/object_tracker_ros.h"
 #include "dbot_ros/util/ros_interface.h"
 #include "dbot_ros_msgs/ObjectState.h"
-#include "geometry_msgs/PoseStamped.h"
-#include "sensor_msgs/CameraInfo.h"
-#include "sensor_msgs/Image.h"
 
 #include "dbot_ros/util/particle_tracker_builder.h"
 
@@ -38,9 +35,22 @@ void ObjectTracker::Instantiate(const std::string& name,
     object_tracker_ = object_tracker_builder.BuildRos();
 }
 
-void ObjectTracker::SetPose(const geometry_msgs::Pose& pose)
+void ObjectTracker::SetPose(const geometry_msgs::Pose& pose,
+                            const geometry_msgs::Twist& twist)
 {
-    object_tracker_->tracker()->initialize({ri::to_pose_velocity_vector(pose)});
+    Eigen::Vector3d linear_vel(Eigen::Vector3d::Zero());
+    linear_vel[0] = twist.linear.x;
+    linear_vel[1] = twist.linear.y;
+    linear_vel[2] = twist.linear.z;
+    Eigen::Vector3d angular_vel(Eigen::Vector3d::Zero());
+    angular_vel[0] = twist.angular.x;
+    angular_vel[1] = twist.angular.y;
+    angular_vel[2] = twist.angular.z;
+
+    dbot::PoseVelocityVector pose_vel_vec = ri::to_pose_velocity_vector(pose);
+    pose_vel_vec.linear_velocity()        = linear_vel;
+    pose_vel_vec.angular_velocity()       = angular_vel;
+    object_tracker_->tracker()->initialize({pose_vel_vec});
 }
 
 void ObjectTracker::Step(const sensor_msgs::Image& depth)
@@ -90,7 +100,8 @@ void ObjectTracker::Step(const sensor_msgs::Image& depth)
     object_tracker_->run_once();
 }
 
-void ObjectTracker::GetPose(geometry_msgs::PoseStamped* pose_stamped) const
+void ObjectTracker::GetPose(geometry_msgs::PoseStamped* pose_stamped,
+                            geometry_msgs::Twist* twist) const
 {
     if (!object_tracker_)
     {
@@ -98,16 +109,19 @@ void ObjectTracker::GetPose(geometry_msgs::PoseStamped* pose_stamped) const
         return;
     }
     *pose_stamped = object_tracker_->current_pose();
+    *twist        = object_tracker_->current_velocity().twist;
 }
 
-void ObjectTracker::GetPose(geometry_msgs::Pose* pose) const
+void ObjectTracker::GetPose(geometry_msgs::Pose* pose,
+                            geometry_msgs::Twist* twist) const
 {
     if (!object_tracker_)
     {
         ROS_ERROR("Object tracker for \"%s\" not instantiated", name_.c_str());
         return;
     }
-    *pose = object_tracker_->current_pose().pose;
+    *pose  = object_tracker_->current_pose().pose;
+    *twist = object_tracker_->current_velocity().twist;
 }
 
 std::string ObjectTracker::name() const
