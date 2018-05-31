@@ -110,6 +110,10 @@ void MultiObjectTracker::SetPose(const std::string& name,
         ROS_ERROR("Tracker for \"%s\" not created yet!", name.c_str());
         return;
     }
+    std::string mesh_name               = trackers_[name].mesh_name();
+    sensor_msgs::CameraInfo camera_info = trackers_[name].camera_info();
+    trackers_.erase(name);
+    trackers_[name].Instantiate(name, mesh_name, camera_info);
     trackers_[name].SetPose(pose, twist);
 }
 
