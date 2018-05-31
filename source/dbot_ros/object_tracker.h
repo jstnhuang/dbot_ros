@@ -30,10 +30,12 @@ public:
     void GetPose(geometry_msgs::Pose* pose, geometry_msgs::Twist* twist) const;
     std::string name() const;
     std::string mesh_name() const;
+    sensor_msgs::CameraInfo camera_info() const;
 
 private:
     std::string name_;
     std::string mesh_name_;
+    sensor_msgs::CameraInfo camera_info_;
 
     // Strangely, annotator_node fails to link if we have a
     // dbot::ObjectResourceIdentifier as a member.

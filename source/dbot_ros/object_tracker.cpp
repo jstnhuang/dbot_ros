@@ -21,8 +21,9 @@ void ObjectTracker::Instantiate(const std::string& name,
                                 const std::string& mesh_name,
                                 const sensor_msgs::CameraInfo& camera_info)
 {
-    name_      = name;
-    mesh_name_ = mesh_name;
+    name_        = name;
+    mesh_name_   = mesh_name;
+    camera_info_ = camera_info;
 
     dbot::ObjectResourceIdentifier ori;
 
@@ -128,8 +129,14 @@ std::string ObjectTracker::name() const
 {
     return name_;
 }
+
 std::string ObjectTracker::mesh_name() const
 {
     return mesh_name_;
+}
+
+sensor_msgs::CameraInfo ObjectTracker::camera_info() const
+{
+    return camera_info_;
 }
 }  // namespace pbi
